@@ -33,13 +33,14 @@ Cada push a `main` en GitHub deployará automáticamente.
 
 **Configura Variables:**
 - Click en "Variables"
-- Agrega:
+- Agrega (sin valores de ejemplo):
   ```
-  DB_HOST = (tu host MySQL)
-  DB_USER = root
-  DB_PASSWORD = (tu password)
+  DB_HOST = (tu host PostgreSQL)
+  DB_USER = (tu usuario)
+  DB_PASSWORD = (tu contraseña)
   DB_NAME = brauni_db
-  GROQ_API_KEY = (tu clave)
+  DB_PORT = 5432
+  GROQ_API_KEY = (tu clave de Groq)
   PORT = 3000
   ```
 

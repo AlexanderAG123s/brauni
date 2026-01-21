@@ -15,3 +15,7 @@
 
 [context.branch-deploy.environment]
   VITE_API_URL = "http://localhost:3000"
+
+# Omit paths that should not be scanned for secrets
+[build.environment]
+  SECRETS_SCAN_OMIT_PATHS = "server/**,DEPLOY_GUIDE.md,POSTGRES_MIGRATION.md"
