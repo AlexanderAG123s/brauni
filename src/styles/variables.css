@@ -1,0 +1,60 @@
+:root {
+  /* Colors - Dark Theme Focus (Premium Black & White) */
+  --bg-app: #09090b;       /* Deep darkest base */
+  --bg-sidebar: #09090b;   /* Seamless sidebar */
+  --bg-header: #09090b;    /* Transparent header feel */
+  --bg-card: #141417;      /* Slightly elevated surface */
+  --bg-card-hover: #1c1c21;
+  
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1aa;
+  --text-tertiary: #71717a;
+  
+  --primary: #ffffff;
+  --primary-fg: #000000;
+  
+  --border-subtle: #27272a;
+  --border-focus: #52525b;
+  
+  --status-success: #10b981; /* Muted green for stats, not too bright */
+  --status-warning: #f59e0b;
+  --status-danger: #ef4444;
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  
+  /* Layout */
+  --sidebar-width: 260px;
+  --header-height: 64px;
+  
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 999px;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+  --shadow-elevation: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+}
+
+/* Light Theme (Optional for future, but focusing on Dark as per image) */
+[data-theme="light"] {
+  --bg-app: #fafafa;
+  --bg-sidebar: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f4f4f5;
+  --text-primary: #18181b;
+  --text-secondary: #52525b;
+  --border-subtle: #e4e4e7;
+  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
