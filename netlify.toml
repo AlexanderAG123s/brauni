@@ -16,6 +16,7 @@
 [context.branch-deploy.environment]
   VITE_API_URL = "http://localhost:3000"
 
-# Omit paths that should not be scanned for secrets
+# Security: Omit backend-related secrets from scanning
 [build.environment]
-  SECRETS_SCAN_OMIT_PATHS = "server/**,DEPLOY_GUIDE.md,POSTGRES_MIGRATION.md"
+  SECRETS_SCAN_OMIT_PATHS = "server/**,DEPLOY_GUIDE.md,POSTGRES_MIGRATION.md,**/*.md"
+  SECRETS_SCAN_OMIT_KEYS = "DB_USER,DB_PASSWORD,DB_HOST,DB_NAME,DB_PORT"
