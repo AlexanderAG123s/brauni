@@ -79,12 +79,13 @@ function App() {
 
   return (
     <div className="layout">
-      <Sidebar activeView={activeView} onNavigate={setActiveView} role={user.role} />
+      <Sidebar activeView={activeView} onNavigate={setActiveView} role={user.role} onLogout={() => setUser(null)} />
       <div className="main-content">
          <Header 
             onSearchClick={() => setIsSearchOpen(true)} 
             user={user} 
             chatUnreadCount={chatUnreadCount}
+            onLogout={() => setUser(null)}
          />
          <div className="content-scroll">
             {renderContent()}

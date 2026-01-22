@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { LayoutDashboard, Book, Users, Repeat, BarChart3, Settings, LogOut } from 'lucide-react';
 import './Sidebar.css';
 
-const Sidebar = ({ activeView, onNavigate, role }) => {
+const Sidebar = ({ activeView, onNavigate, role, onLogout }) => {
   const menuItems = [
     { name: 'Dashboard', icon: LayoutDashboard },
     { name: 'Libros', icon: Book },
@@ -50,7 +50,7 @@ const Sidebar = ({ activeView, onNavigate, role }) => {
             </button>
           </li>
           <li>
-            <button className="nav-item danger">
+            <button className="nav-item danger" onClick={onLogout}>
               <LogOut size={20} className="nav-icon" />
               <span>Salir</span>
             </button>

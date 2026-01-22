@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Bell, User, LogOut, Settings, ChevronDown, AlertCircle, Bot } from 'lucide-react';
 
-const Header = ({ onSearchClick, user, chatUnreadCount = 0 }) => {
+const Header = ({ onSearchClick, user, chatUnreadCount = 0, onLogout }) => {
     const [notifications, setNotifications] = useState([]);
     const [showNotifs, setShowNotifs] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
@@ -156,7 +156,7 @@ const Header = ({ onSearchClick, user, chatUnreadCount = 0 }) => {
                             <button className="dropdown-item">
                                 <Settings size={14} /> Configuración
                             </button>
-                            <button className="dropdown-item" style={{ color: 'var(--status-danger)' }}>
+                            <button className="dropdown-item" onClick={onLogout} style={{ color: 'var(--status-danger)' }}>
                                 <LogOut size={14} /> Cerrar Sesión
                             </button>
                         </div>
