@@ -46,7 +46,7 @@ const ChatWidget = ({ onUnreadChange, user }) => {
         setMessages(prev => [...prev, { role: 'system', content: 'Subiendo imagen...', hidden: true }]);
 
         try {
-            const res = await fetch('http://localhost:3000/api/upload', {
+            const res = await fetch('https://brauni-backend.onrender.com/api/upload', {
                 method: 'POST',
                 body: formData
             });
@@ -62,7 +62,7 @@ const ChatWidget = ({ onUnreadChange, user }) => {
             });
 
             // Trigger AI response with the new context
-            await fetch('http://localhost:3000/api/chat', {
+            await fetch('https://brauni-backend.onrender.com/api/chat', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ 
@@ -86,7 +86,7 @@ const ChatWidget = ({ onUnreadChange, user }) => {
         setMessages(prev => [...prev, uiMsg]);
 
         // Trigger AI
-        await fetch('http://localhost:3000/api/chat', {
+        await fetch('https://brauni-backend.onrender.com/api/chat', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ 
@@ -166,7 +166,7 @@ const ChatWidget = ({ onUnreadChange, user }) => {
     // Proactive Notifications (Poll every 10s for demo)
     useEffect(() => {
         const checkNotifications = () => {
-             fetch('http://localhost:3000/api/notifications')
+             fetch('https://brauni-backend.onrender.com/api/notifications')
                 .then(res => res.json())
                 .then(data => {
                     if (data.length > 0) {
@@ -216,7 +216,7 @@ const ChatWidget = ({ onUnreadChange, user }) => {
         setLoading(true);
 
         try {
-            const res = await fetch('http://localhost:3000/api/chat', {
+            const res = await fetch('https://brauni-backend.onrender.com/api/chat', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ 

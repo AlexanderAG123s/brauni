@@ -8,7 +8,7 @@ const Header = ({ onSearchClick, user, chatUnreadCount = 0, onLogout }) => {
 
     // Fetch Notifications
     useEffect(() => {
-        fetch('http://localhost:3000/api/notifications')
+        fetch('https://brauni-backend.onrender.com/api/notifications')
             .then(res => res.json())
             .then(data => {
                 if (Array.isArray(data)) {

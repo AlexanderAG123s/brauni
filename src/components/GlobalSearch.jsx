@@ -12,8 +12,8 @@ const GlobalSearch = ({ isOpen, onClose, onNavigate }) => {
     // Fetch data once on mount (cache strategy for smoothness)
     useEffect(() => {
         Promise.all([
-            fetch('http://localhost:3000/api/books').then(r => r.json()),
-            fetch('http://localhost:3000/api/users').then(r => r.json())
+            fetch('https://brauni-backend.onrender.com/api/books').then(r => r.json()),
+            fetch('https://brauni-backend.onrender.com/api/users').then(r => r.json())
         ]).then(([books, users]) => {
             setData({ 
                 books: Array.isArray(books) ? books : [], 

@@ -7,7 +7,7 @@ const RecentActivity = ({ title = "Actividad Reciente", limit = 5 }) => {
 
     useEffect(() => {
         const fetchLoans = () => {
-            fetch('http://localhost:3000/api/loans')
+            fetch('https://brauni-backend.onrender.com/api/loans')
                 .then(res => res.json())
                 .then(data => setLoans(data))
                 .catch(err => console.error(err));
