@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Card from '../components/Card';
 import RecentActivity from '../components/RecentActivity';
+import { API_BASE_URL } from '../config';
 import { 
    Zap, PlusCircle, UserPlus, BookOpen, 
    CheckSquare, Clock, AlertCircle, ArrowRight,
@@ -12,12 +13,12 @@ const Overview = ({ setActiveView, user }) => {
   const [recentLoans, setRecentLoans] = useState([]);
 
   useEffect(() => {
-     fetch('https://brauni-backend.onrender.com/api/stats')
+     fetch(`${API_BASE_URL}/api/stats`)
         .then(res => res.json())
         .then(data => setStats(data))
         .catch(err => console.error(err));
 
-     fetch('https://brauni-backend.onrender.com/api/loans')
+     fetch(`${API_BASE_URL}/api/loans`)
         .then(res => res.json())
         .then(data => setRecentLoans(data))
         .catch(err => console.error(err));

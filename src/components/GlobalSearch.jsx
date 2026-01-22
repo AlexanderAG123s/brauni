@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Card from './Card';
 import Modal from './Modal';
+import { API_BASE_URL } from '../config';
 import { Search, Command, Book, User, ArrowRight, X } from 'lucide-react';
 
 const GlobalSearch = ({ isOpen, onClose, onNavigate }) => {
@@ -12,8 +13,8 @@ const GlobalSearch = ({ isOpen, onClose, onNavigate }) => {
     // Fetch data once on mount (cache strategy for smoothness)
     useEffect(() => {
         Promise.all([
-            fetch('https://brauni-backend.onrender.com/api/books').then(r => r.json()),
-            fetch('https://brauni-backend.onrender.com/api/users').then(r => r.json())
+            fetch(`${API_BASE_URL}/api/books`).then(r => r.json()),
+            fetch(`${API_BASE_URL}/api/users`).then(r => r.json())
         ]).then(([books, users]) => {
             setData({ 
                 books: Array.isArray(books) ? books : [], 

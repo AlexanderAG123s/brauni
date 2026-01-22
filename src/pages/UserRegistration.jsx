@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Card from '../components/Card';
 import Modal from '../components/Modal';
 import UserDetailModal from '../components/UserDetailModal';
+import { API_BASE_URL } from '../config';
 import { Plus, User, Phone, Mail, GraduationCap, MoreVertical, Loader2 } from 'lucide-react';
 
 const UserRegistration = () => {
@@ -26,7 +27,7 @@ const UserRegistration = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('https://brauni-backend.onrender.com/api/users');
+      const response = await fetch(`${API_BASE_URL}/api/users`);
       if (response.ok) {
         const data = await response.json();
         setUsers(data);
@@ -49,7 +50,7 @@ const UserRegistration = () => {
       e.preventDefault();
       
       try {
-        const response = await fetch('https://brauni-backend.onrender.com/api/users', {
+        const response = await fetch(`${API_BASE_URL}/api/users`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData)
@@ -259,7 +260,7 @@ const UserRegistration = () => {
           }}
           onDelete={async (id) => {
              try {
-                await fetch(`https://brauni-backend.onrender.com/api/users/${id}`, { method: 'DELETE' });
+                await fetch(`${API_BASE_URL}/api/users/${id}`, { method: 'DELETE' });
                 setUsers(prev => prev.filter(u => u.id !== id));
                 setSelectedUser(null);
              } catch (err) { alert('Error deleting'); }

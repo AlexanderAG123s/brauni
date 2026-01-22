@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Modal from './Modal';
+import { API_BASE_URL } from '../config';
 import { User, Clock, ShieldAlert, Trash2, Save, Ban } from 'lucide-react';
 
 const UserDetailModal = ({ isOpen, onClose, user, onUpdate, onDelete }) => {
@@ -16,7 +17,7 @@ const UserDetailModal = ({ isOpen, onClose, user, onUpdate, onDelete }) => {
 
   const fetchHistory = async () => {
      try {
-         const res = await fetch(`https://brauni-backend.onrender.com/api/users/${user.id}/history`);
+         const res = await fetch(`${API_BASE_URL}/api/users/${user.id}/history`);
          if (res.ok) {
              const data = await res.json();
              setHistory(data);

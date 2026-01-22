@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { API_BASE_URL } from '../config';
 import { MessageSquare, Send, X, Bot, Sparkles } from 'lucide-react';
 
 const ChatWidget = ({ onUnreadChange, user }) => {
@@ -46,7 +47,7 @@ const ChatWidget = ({ onUnreadChange, user }) => {
         setMessages(prev => [...prev, { role: 'system', content: 'Subiendo imagen...', hidden: true }]);
 
         try {
-            const res = await fetch('https://brauni-backend.onrender.com/api/upload', {
+            const res = await fetch(`${API_BASE_URL}/api/upload`, {
                 method: 'POST',
                 body: formData
             });
@@ -62,7 +63,7 @@ const ChatWidget = ({ onUnreadChange, user }) => {
             });
 
             // Trigger AI response with the new context
-            await fetch('https://brauni-backend.onrender.com/api/chat', {
+            await fetch(`${API_BASE_URL}/api/chat`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ 
@@ -86,7 +87,7 @@ const ChatWidget = ({ onUnreadChange, user }) => {
         setMessages(prev => [...prev, uiMsg]);
 
         // Trigger AI
-        await fetch('https://brauni-backend.onrender.com/api/chat', {
+        await fetch(`${API_BASE_URL}/api/chat`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ 
@@ -166,7 +167,7 @@ const ChatWidget = ({ onUnreadChange, user }) => {
     // Proactive Notifications (Poll every 10s for demo)
     useEffect(() => {
         const checkNotifications = () => {
-             fetch('https://brauni-backend.onrender.com/api/notifications')
+             fetch(`${API_BASE_URL}/api/notifications`)
                 .then(res => res.json())
                 .then(data => {
                     if (data.length > 0) {
@@ -216,7 +217,7 @@ const ChatWidget = ({ onUnreadChange, user }) => {
         setLoading(true);
 
         try {
-            const res = await fetch('https://brauni-backend.onrender.com/api/chat', {
+            const res = await fetch(`${API_BASE_URL}/api/chat`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ 

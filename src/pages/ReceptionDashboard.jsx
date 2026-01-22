@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Card from '../components/Card';
 import RecentActivity from '../components/RecentActivity';
+import { API_BASE_URL } from '../config';
 import { Search, UserCheck, BookOpen, ArrowRight, CornerDownLeft, Plus, ScanLine, Clock, CheckCircle, X, Loader2 } from 'lucide-react';
 
 const ReceptionDashboard = () => {
@@ -29,8 +30,8 @@ const ReceptionDashboard = () => {
     // Fetch Data on Mount
     const fetchData = () => {
         Promise.all([
-            fetch('https://brauni-backend.onrender.com/api/users').then(r => r.json()),
-            fetch('https://brauni-backend.onrender.com/api/books').then(r => r.json())
+            fetch(`${API_BASE_URL}/api/users`).then(r => r.json()),
+            fetch(`${API_BASE_URL}/api/books`).then(r => r.json())
         ]).then(([usersData, booksData]) => {
             setUsers(Array.isArray(usersData) ? usersData : []);
             setBooks(Array.isArray(booksData) ? booksData : []);
@@ -95,7 +96,7 @@ const ReceptionDashboard = () => {
     const confirmLoan = async () => {
         setLoading(true);
         try {
-            const res = await fetch('https://brauni-backend.onrender.com/api/loans', {
+            const res = await fetch(`${API_BASE_URL}/api/loans`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ user_id: scannedUser.id, book_id: scannedBook.id, days: selectedDuration })

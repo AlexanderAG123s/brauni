@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Card from '../components/Card';
 import Modal from '../components/Modal';
+import { API_BASE_URL } from '../config';
 import { User, Shield, Trash2, Plus, Loader2, Mail, Lock, CheckCircle, BadgeCheck } from 'lucide-react';
 
 const Librarians = () => {
@@ -17,7 +18,7 @@ const Librarians = () => {
     }, []);
 
     const fetchStaff = () => {
-        fetch('https://brauni-backend.onrender.com/api/staff')
+        fetch(`${API_BASE_URL}/api/staff`)
             .then(res => res.json())
             .then(data => { setStaff(data); setLoading(false); })
             .catch(err => console.error(err));
@@ -26,7 +27,7 @@ const Librarians = () => {
     const handleDelete = async (id) => {
         if (!confirm('¿Eliminar bibliotecario?')) return;
         try {
-            await fetch(`https://brauni-backend.onrender.com/api/staff/${id}`, { method: 'DELETE' });
+            await fetch(`${API_BASE_URL}/api/staff/${id}`, { method: 'DELETE' });
             fetchStaff();
         } catch(e) { alert('Error'); }
     };
@@ -35,7 +36,7 @@ const Librarians = () => {
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            const res = await fetch('https://brauni-backend.onrender.com/api/staff', {
+            const res = await fetch(`${API_BASE_URL}/api/staff`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(formData)

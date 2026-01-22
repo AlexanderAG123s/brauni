@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Bell, User, LogOut, Settings, ChevronDown, AlertCircle, Bot } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 const Header = ({ onSearchClick, user, chatUnreadCount = 0, onLogout }) => {
     const [notifications, setNotifications] = useState([]);
@@ -8,7 +9,7 @@ const Header = ({ onSearchClick, user, chatUnreadCount = 0, onLogout }) => {
 
     // Fetch Notifications
     useEffect(() => {
-        fetch('https://brauni-backend.onrender.com/api/notifications')
+        fetch(`${API_BASE_URL}/api/notifications`)
             .then(res => res.json())
             .then(data => {
                 if (Array.isArray(data)) {

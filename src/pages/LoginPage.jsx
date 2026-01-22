@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BookOpen, User, Lock, Loader2 } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 const LoginPage = ({ onLogin }) => {
     const [email, setEmail] = useState('');
@@ -13,7 +14,7 @@ const LoginPage = ({ onLogin }) => {
         setError('');
 
         try {
-            const res = await fetch('https://brauni-backend.onrender.com/api/login', {
+            const res = await fetch(`${API_BASE_URL}/api/login`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ email, password })

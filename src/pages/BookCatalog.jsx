@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Card from '../components/Card';
-import Modal from '../components/Modal';
-import { Search, Filter, Star, Book, Plus, Loader2, Upload, X } from 'lucide-react';
+import Modal from '../components/Modal';import { API_BASE_URL } from '../config';import { Search, Filter, Star, Book, Plus, Loader2, Upload, X } from 'lucide-react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -34,7 +33,7 @@ const BookCatalog = () => {
 
   const fetchBooks = async () => {
      try {
-        const res = await fetch(`https://brauni-backend.onrender.com/api/books?t=${Date.now()}`);
+        const res = await fetch(`${API_BASE_URL}/api/books?t=${Date.now()}`);
         if (res.ok) {
            const data = await res.json();
            setBooks(data);
@@ -71,7 +70,7 @@ const BookCatalog = () => {
       }
 
       try {
-          const res = await fetch('https://brauni-backend.onrender.com/api/books', {
+          const res = await fetch(`${API_BASE_URL}/api/books`, {
               method: 'POST',
               body: submitData // Fetch sets Content-Type header specific to Boundary 
           });
@@ -98,7 +97,7 @@ const BookCatalog = () => {
       if (!window.confirm('¿Estás seguro de que quieres eliminar este libro?')) return;
 
       try {
-          const res = await fetch(`https://brauni-backend.onrender.com/api/books/${bookId}`, {
+          const res = await fetch(`${API_BASE_URL}/api/books/${bookId}`, {
               method: 'DELETE'
           });
 

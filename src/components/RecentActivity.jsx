@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Card from './Card';
+import { API_BASE_URL } from '../config';
 import { Clock, BookOpen, CheckCircle } from 'lucide-react';
 
 const RecentActivity = ({ title = "Actividad Reciente", limit = 5 }) => {
@@ -7,7 +8,7 @@ const RecentActivity = ({ title = "Actividad Reciente", limit = 5 }) => {
 
     useEffect(() => {
         const fetchLoans = () => {
-            fetch('https://brauni-backend.onrender.com/api/loans')
+            fetch(`${API_BASE_URL}/api/loans`)
                 .then(res => res.json())
                 .then(data => setLoans(data))
                 .catch(err => console.error(err));

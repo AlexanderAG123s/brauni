@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Card from '../components/Card';
+import { API_BASE_URL } from '../config';
 import { BarChart3, TrendingUp, PieChart, ArrowUpRight, ArrowDownRight, Calendar, BookOpen } from 'lucide-react';
 
 const Statistics = () => {
@@ -7,7 +8,7 @@ const Statistics = () => {
 
   useEffect(() => {
      const fetchStats = () => {
-         fetch('https://brauni-backend.onrender.com/api/stats')
+         fetch(`${API_BASE_URL}/api/stats`)
             .then(res => res.json())
             .then(data => setStats(data))
             .catch(err => console.error(err));
