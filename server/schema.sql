@@ -3,7 +3,7 @@
 -- Note: Create the database first manually:
 -- CREATE DATABASE brauni_db;
 
-CREATE TABLE IF NOT EXISTS staff (
+CREATE TABLE staff (
   id SERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL UNIQUE,
@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS staff (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   matricula VARCHAR(50) NOT NULL UNIQUE,
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS users (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS books (
+CREATE TABLE books (
   id SERIAL PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
   author VARCHAR(255),
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS books (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS loans (
+CREATE TABLE loans (
   id SERIAL PRIMARY KEY,
   user_id INT,
   book_id INT,
@@ -46,10 +46,11 @@ CREATE TABLE IF NOT EXISTS loans (
   FOREIGN KEY (book_id) REFERENCES books(id)
 );
 
-CREATE INDEX IF NOT EXISTS idx_users_search ON users(name, matricula);
-CREATE INDEX IF NOT EXISTS idx_books_search ON books(title, author);
+CREATE INDEX idx_users_search ON users(name, matricula);
+CREATE INDEX idx_books_search ON books(title, author);
 
 -- Insert default admin staff member
 INSERT INTO staff (name, email, password, role) VALUES
+  ('Super Admin', 'superadmin@brauni.edu', '$2b$10$W06.zOkP2IJGtQCtRPohGO/EYsFktib1JTFQPyw..y9C6BjLBwkOC', 'super_admin'),
   ('Brauni', 'admin@brauni.edu', '$2b$10$W06.zOkP2IJGtQCtRPohGO/EYsFktib1JTFQPyw..y9C6BjLBwkOC', 'admin')
 ON CONFLICT (email) DO NOTHING;
