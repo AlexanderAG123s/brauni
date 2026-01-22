@@ -14,10 +14,23 @@ import Librarians from './pages/Librarians';
 // import ChatWidget from './components/ChatWidget'; // DISABLED
 
 function App() {
-  const [user, setUser] = useState(null); // Auth State
+  const [user, setUser] = useState(() => {
+    // Recover session from localStorage on app load
+    const savedUser = localStorage.getItem('brauni_user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
   const [activeView, setActiveView] = useState('Dashboard');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [chatUnreadCount, setChatUnreadCount] = useState(0);
+
+  // Save user to localStorage when login/logout
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('brauni_user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('brauni_user');
+    }
+  }, [user]);
 
   // Ctrl+K Handler
   useEffect(() => {
