@@ -1,8 +1,19 @@
-CREATE DATABASE IF NOT EXISTS brauni_library_db;
-USE brauni_library_db;
+-- PostgreSQL Schema for Brauni Library Management System
+
+-- Note: Create the database first manually:
+-- CREATE DATABASE brauni_db;
+
+CREATE TABLE IF NOT EXISTS staff (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  role VARCHAR(50) DEFAULT 'admin',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 CREATE TABLE IF NOT EXISTS users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   matricula VARCHAR(50) NOT NULL UNIQUE,
   career VARCHAR(100),
@@ -13,28 +24,32 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS books (
-  id INT AUTO_INCREMENT PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
   author VARCHAR(255),
   isbn VARCHAR(50) UNIQUE,
   category VARCHAR(50),
   status VARCHAR(20) DEFAULT 'Available',
   cover_color VARCHAR(20) DEFAULT '#3b82f6',
-  cover_image VARCHAR(255), -- New column for image path
+  cover_image VARCHAR(255),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS loans (
-  id INT AUTO_INCREMENT PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   user_id INT,
   book_id INT,
-  loan_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-  return_date DATETIME,
+  loan_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  return_date TIMESTAMP,
   status VARCHAR(20) DEFAULT 'Active',
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (book_id) REFERENCES books(id)
 );
 
--- Optimization Indexes
 CREATE INDEX IF NOT EXISTS idx_users_search ON users(name, matricula);
 CREATE INDEX IF NOT EXISTS idx_books_search ON books(title, author);
+
+-- Insert default admin staff member
+INSERT INTO staff (name, email, password, role) VALUES
+  ('Brauni', 'admin@brauni.edu', '$2b$10$W06.zOkP2IJGtQCtRPohGO/EYsFktib1JTFQPyw..y9C6BjLBwkOC', 'admin')
+ON CONFLICT (email) DO NOTHING;
