@@ -11,7 +11,7 @@ const Sidebar = ({ activeView, onNavigate, role, onLogout }) => {
     { name: 'Estadísticas', icon: BarChart3 },
   ];
 
-  if (role === 'Admin') {
+  if (role === 'admin' || role === 'super_admin') {
       menuItems.push({ name: 'Bibliotecarios', icon: Users }); // Using Users icon again or similar
   }
 

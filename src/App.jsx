@@ -62,7 +62,7 @@ function App() {
       case 'Estadísticas':
         return <Statistics />;
       case 'Bibliotecarios':
-          return user.role === 'Admin' ? <Librarians /> : <Card>Acceso Denegado</Card>;
+          return (user.role === 'admin' || user.role === 'super_admin') ? <Librarians /> : <Card>Acceso Denegado</Card>;
       case 'Configuración':
           return (
              <Card title="Configuración de Demo">
