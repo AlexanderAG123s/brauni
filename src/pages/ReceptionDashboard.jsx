@@ -32,8 +32,8 @@ const ReceptionDashboard = () => {
             fetch('https://brauni-backend.onrender.com/api/users').then(r => r.json()),
             fetch('https://brauni-backend.onrender.com/api/books').then(r => r.json())
         ]).then(([usersData, booksData]) => {
-            setUsers(usersData);
-            setBooks(booksData);
+            setUsers(Array.isArray(usersData) ? usersData : []);
+            setBooks(Array.isArray(booksData) ? booksData : []);
         }).catch(err => console.error(err));
     };
 
@@ -46,7 +46,7 @@ const ReceptionDashboard = () => {
 
     // User Filter
     useEffect(() => {
-        if (userQuery.trim().length > 0) {
+        if (userQuery.trim().length > 0 && Array.isArray(users)) {
             const lower = userQuery.toLowerCase();
             const results = users.filter(u => 
                 u.name.toLowerCase().includes(lower) || 
@@ -62,7 +62,7 @@ const ReceptionDashboard = () => {
 
     // Book Filter
     useEffect(() => {
-        if (bookQuery.trim().length > 0) {
+        if (bookQuery.trim().length > 0 && Array.isArray(books)) {
             const lower = bookQuery.toLowerCase();
             const results = books.filter(b => 
                 (b.title.toLowerCase().includes(lower) || 

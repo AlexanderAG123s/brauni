@@ -76,8 +76,8 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
 
 app.get('/api/users', async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT * FROM users ORDER BY created_at DESC');
-    res.json(rows);
+    const result = await pool.query('SELECT * FROM users ORDER BY created_at DESC');
+    res.json(result.rows);
   } catch (error) {
     res.status(500).json({ error: "Error del servidor", details: error.message });
   }
@@ -86,29 +86,28 @@ app.get('/api/users', async (req, res) => {
 app.post('/api/users', async (req, res) => {
   const { name, matricula, career, email, phone } = req.body;
   try {
-    const [result] = await pool.query(
-      'INSERT INTO users (name, matricula, career, email, phone) VALUES (?, ?, ?, ?, ?)',
+    const result = await pool.query(
+      'INSERT INTO users (name, matricula, career, email, phone) VALUES ($1, $2, $3, $4, $5) RETURNING *',
       [name, matricula, career, email, phone]
     );
-    const [newUser] = await pool.query('SELECT * FROM users WHERE id = ?', [result.insertId]);
-    res.status(201).json(newUser[0]);
+    res.status(201).json(result.rows[0]);
   } catch (error) {
-    if (error.code === 'ER_DUP_ENTRY') return res.status(409).json({ error: 'Matricula already exists' });
+    if (error.code === '23505') return res.status(409).json({ error: 'Matricula already exists' });
     res.status(500).json({ error: "Error del servidor", details: error.message });
   }
 });
 
 app.get('/api/users/:id/history', async (req, res) => {
     try {
-        const [rows] = await pool.query(`
+        const result = await pool.query(`
             SELECT l.id, l.loan_date, l.return_date, l.status, b.title, b.author 
             FROM loans l 
             JOIN books b ON l.book_id = b.id 
-            WHERE l.user_id = ? 
+            WHERE l.user_id = $1 
             ORDER BY l.loan_date DESC`, 
             [req.params.id]
         );
-        res.json(rows);
+        res.json(result.rows);
     } catch (error) {
         res.status(500).json({ error: "Error del servidor", details: error.message });
     }
@@ -117,7 +116,7 @@ app.get('/api/users/:id/history', async (req, res) => {
 app.put('/api/users/:id', async (req, res) => {
     const { name, email, phone, status } = req.body;
     try {
-        await pool.query('UPDATE users SET name = ?, email = ?, phone = ?, status = ? WHERE id = ?', [name, email, phone, status, req.params.id]);
+        await pool.query('UPDATE users SET name = $1, email = $2, phone = $3, status = $4 WHERE id = $5', [name, email, phone, status, req.params.id]);
         res.json({ success: true });
     } catch (error) {
         res.status(500).json({ error: "Error del servidor", details: error.message });
@@ -126,7 +125,7 @@ app.put('/api/users/:id', async (req, res) => {
 
 app.delete('/api/users/:id', async (req, res) => {
     try {
-        await pool.query('DELETE FROM users WHERE id = ?', [req.params.id]);
+        await pool.query('DELETE FROM users WHERE id = $1', [req.params.id]);
         res.json({ success: true });
     } catch (error) {
         res.status(500).json({ error: "Error del servidor", details: error.message });
@@ -137,29 +136,29 @@ app.delete('/api/users/:id', async (req, res) => {
 
 app.post('/api/loans', async (req, res) => {
     const { user_id, book_id, days = 7 } = req.body; // Default 7 days
-    const connection = await pool.getConnection();
+    const connection = await pool.connect();
     try {
-        await connection.beginTransaction();
+        await connection.query('BEGIN');
 
-        // Calculate due_date
-        const dueDate = new Date();
-        dueDate.setDate(dueDate.getDate() + parseInt(days));
+        // Calculate return_date
+        const returnDate = new Date();
+        returnDate.setDate(returnDate.getDate() + parseInt(days));
 
-        const [loanResult] = await connection.query(
-            'INSERT INTO loans (user_id, book_id, due_date) VALUES (?, ?, ?)',
-            [user_id, book_id, dueDate]
+        const loanResult = await connection.query(
+            'INSERT INTO loans (user_id, book_id, return_date) VALUES ($1, $2, $3) RETURNING *',
+            [user_id, book_id, returnDate]
         );
 
         await connection.query(
-            'UPDATE books SET status = ? WHERE id = ?',
+            'UPDATE books SET status = $1 WHERE id = $2',
             ['Loaned', book_id]
         );
 
-        await connection.commit();
-        res.status(201).json({ id: loanResult.insertId, message: 'Loan created' });
+        await connection.query('COMMIT');
+        res.status(201).json(loanResult.rows[0]);
 
     } catch (error) {
-        await connection.rollback();
+        await connection.query('ROLLBACK');
         res.status(500).json({ error: "Error del servidor", details: error.message });
     } finally {
         connection.release();
@@ -168,15 +167,15 @@ app.post('/api/loans', async (req, res) => {
 
 app.get('/api/loans', async (req, res) => {
     try {
-        const [rows] = await pool.query(`
-            SELECT l.id, l.loan_date, l.due_date, l.status, u.name as user_name, b.title as book_title, b.cover_color
+        const result = await pool.query(`
+            SELECT l.id, l.loan_date, l.return_date, l.status, u.name as user_name, b.title as book_title, b.cover_color
             FROM loans l
             JOIN users u ON l.user_id = u.id
             JOIN books b ON l.book_id = b.id
             ORDER BY l.loan_date DESC
             LIMIT 20
         `);
-        res.json(rows);
+        res.json(result.rows);
     } catch (error) {
         res.status(500).json({ error: "Error del servidor", details: error.message });
     }
@@ -185,26 +184,28 @@ app.get('/api/loans', async (req, res) => {
 // GET /api/notifications (Overdue Loans)
 app.get('/api/notifications', async (req, res) => {
     try {
-        const [rows] = await pool.query(`
-            SELECT l.id, l.due_date, u.name as user_name, b.title as book_title
+        const result = await pool.query(`
+            SELECT l.id, l.return_date, u.name as user_name, b.title as book_title
             FROM loans l
             JOIN users u ON l.user_id = u.id
             JOIN books b ON l.book_id = b.id
-            WHERE l.status = 'Active' AND l.due_date < NOW()
-            ORDER BY l.due_date ASC
+            WHERE l.status = 'Active' AND l.return_date < NOW()
+            ORDER BY l.return_date ASC
         `);
-        res.json(rows);
+        res.json(result.rows);
     } catch (error) {
         res.status(500).json({ error: "Error del servidor", details: error.message });
     }
 });
 
+// --- STATS ROUTE ---
+
 // --- BOOK ROUTES ---
 
 app.get('/api/books', async (req, res) => {
     try {
-        const [rows] = await pool.query('SELECT * FROM books ORDER BY created_at DESC');
-        res.json(rows); 
+        const result = await pool.query('SELECT * FROM books ORDER BY created_at DESC');
+        res.json(result.rows); 
     } catch (error) {
         res.status(500).json({ error: "Error del servidor", details: error.message });
     }
@@ -215,14 +216,13 @@ app.post('/api/books', upload.single('image'), async (req, res) => {
     const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
     
     try {
-        const [result] = await pool.query(
-            'INSERT INTO books (title, author, isbn, category, cover_color, cover_image) VALUES (?, ?, ?, ?, ?, ?)',
+        const result = await pool.query(
+            'INSERT INTO books (title, author, isbn, category, cover_color, cover_image) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
             [title, author, isbn, category, cover_color || '#3b82f6', imagePath]
         );
-        const [newBook] = await pool.query('SELECT * FROM books WHERE id = ?', [result.insertId]);
-        res.status(201).json(newBook[0]);
+        res.status(201).json(result.rows[0]);
     } catch (error) {
-        if (error.code === 'ER_DUP_ENTRY') return res.status(409).json({ error: 'ISBN already exists' });
+        if (error.code === '23505') return res.status(409).json({ error: 'ISBN already exists' });
         res.status(500).json({ error: "Error del servidor", details: error.message });
     }
 });
@@ -230,7 +230,7 @@ app.post('/api/books', upload.single('image'), async (req, res) => {
 app.put('/api/books/:id', async (req, res) => {
     const { status } = req.body;
     try {
-         await pool.query('UPDATE books SET status = ? WHERE id = ?', [status, req.params.id]);
+         await pool.query('UPDATE books SET status = $1 WHERE id = $2', [status, req.params.id]);
          res.json({ success: true });
     } catch (error) {
         res.status(500).json({ error: "Error del servidor", details: error.message });
@@ -239,7 +239,7 @@ app.put('/api/books/:id', async (req, res) => {
 
 app.delete('/api/books/:id', async (req, res) => {
     try {
-        await pool.query('DELETE FROM books WHERE id = ?', [req.params.id]);
+        await pool.query('DELETE FROM books WHERE id = $1', [req.params.id]);
         res.json({ success: true, message: 'Libro eliminado exitosamente' });
     } catch (error) {
         res.status(500).json({ error: "Error del servidor", details: error.message });
@@ -250,28 +250,28 @@ app.delete('/api/books/:id', async (req, res) => {
 
 app.get('/api/stats', async (req, res) => {
     try {
-        const [loansTotal] = await pool.query('SELECT COUNT(*) as count FROM loans');
-        const [usersTotal] = await pool.query('SELECT COUNT(*) as count FROM users');
-        const [booksTotal] = await pool.query('SELECT COUNT(*) as count FROM books');
-        const [activeLoans] = await pool.query('SELECT COUNT(*) as count FROM books WHERE status = "Loaned"');
-        const [lostBooks] = await pool.query('SELECT COUNT(*) as count FROM books WHERE status = "Lost"');
+        const loansTotal = await pool.query('SELECT COUNT(*) as count FROM loans');
+        const usersTotal = await pool.query('SELECT COUNT(*) as count FROM users');
+        const booksTotal = await pool.query('SELECT COUNT(*) as count FROM books');
+        const activeLoans = await pool.query('SELECT COUNT(*) as count FROM books WHERE status = \'Loaned\'');
+        const lostBooks = await pool.query('SELECT COUNT(*) as count FROM books WHERE status = \'Lost\'');
 
-        // Simple monthly aggregation
-        const [monthlyStats] = await pool.query(`
-            SELECT DATE_FORMAT(loan_date, '%b') as month, COUNT(*) as count 
+        // Simple monthly aggregation - PostgreSQL DATE format
+        const monthlyStats = await pool.query(`
+            SELECT TO_CHAR(loan_date, 'Mon') as month, COUNT(*) as count 
             FROM loans 
-            WHERE loan_date >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
-            GROUP BY month 
+            WHERE loan_date >= NOW() - INTERVAL '6 months'
+            GROUP BY TO_CHAR(loan_date, 'Mon')
             ORDER BY MIN(loan_date) ASC
         `);
 
         res.json({
-            loans: loansTotal[0].count,
-            users: usersTotal[0].count,
-            books: booksTotal[0].count,
-            active_loans: activeLoans[0].count,
-            lost: lostBooks[0].count,
-            chart: monthlyStats
+            loans: loansTotal.rows[0].count,
+            users: usersTotal.rows[0].count,
+            books: booksTotal.rows[0].count,
+            active_loans: activeLoans.rows[0].count,
+            lost: lostBooks.rows[0].count,
+            chart: monthlyStats.rows
         });
     } catch (error) {
         res.status(500).json({ error: "Error del servidor", details: error.message });
@@ -284,7 +284,8 @@ app.get('/api/stats', async (req, res) => {
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
     try {
-        const [rows] = await pool.query('SELECT * FROM staff WHERE email = ?', [email]);
+        const result = await pool.query('SELECT * FROM staff WHERE email = $1', [email]);
+        const rows = result.rows;
         if (rows.length === 0) return res.status(401).json({ error: 'Credenciales inválidas' });
         
         const user = rows[0];
@@ -310,8 +311,8 @@ app.post('/api/login', async (req, res) => {
 
 app.get('/api/staff', async (req, res) => {
     try {
-        const [rows] = await pool.query('SELECT id, name, email, role, created_at FROM staff');
-        res.json(rows);
+        const result = await pool.query('SELECT id, name, email, role, created_at FROM staff');
+        res.json(result.rows);
     } catch (error) {
         res.status(500).json({ error: "Error del servidor", details: error.message });
     }
@@ -321,7 +322,7 @@ app.post('/api/staff', async (req, res) => {
     const { name, email, password, role } = req.body;
     try {
         const hashedPassword = await require('bcryptjs').hash(password, 10);
-        await pool.query('INSERT INTO staff (name, email, password, role) VALUES (?, ?, ?, ?)', [name, email, hashedPassword, role]);
+        await pool.query('INSERT INTO staff (name, email, password, role) VALUES ($1, $2, $3, $4)', [name, email, hashedPassword, role]);
         res.json({ success: true });
     } catch (error) {
         res.status(500).json({ error: "Error del servidor", details: error.message });
@@ -337,7 +338,6 @@ app.delete('/api/staff/:id', async (req, res) => {
     }
 });
 
-// Health Check Endpoint
 app.get('/api/health', async (req, res) => {
     try {
         const result = await pool.query('SELECT NOW()');
@@ -353,7 +353,7 @@ app.get('/api/health', async (req, res) => {
     } catch (error) {
         res.status(500).json({ 
             status: 'ERROR', 
-            message: 'Error de conexión con la base de datos',
+            message: 'Error de conexi�n con la base de datos',
             error: error.message
         });
     }
@@ -365,11 +365,17 @@ app.listen(PORT, async () => {
   // Test database connection
   try {
     const result = await pool.query('SELECT NOW()');
+    const dbUrl = process.env.DATABASE_URL || '';
+    const hostMatch = dbUrl.match(/@([^:]+)/);
+    const dbMatch = dbUrl.match(/\/([^?]+)$/);
+    const host = hostMatch ? hostMatch[1] : 'unknown';
+    const dbName = dbMatch ? dbMatch[1] : 'unknown';
+    
     console.log('✅ Base de datos conectada correctamente');
-    console.log(`📊 Base de datos: ${process.env.DB_NAME || 'brauni_library_db'}`);
-    console.log(`🔗 Host: ${process.env.DB_HOST || 'localhost'}`);
+    console.log(`📊 Base de datos: ${dbName}`);
+    console.log(`🔗 Host: ${host}`);
   } catch (error) {
     console.error('❌ Error conectando a la base de datos:', error.message);
-    console.error('Verifica las variables de entorno: DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME');
+    console.error('Verifica la variable DATABASE_URL');
   }
 });
