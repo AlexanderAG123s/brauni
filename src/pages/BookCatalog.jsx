@@ -34,7 +34,7 @@ const BookCatalog = () => {
 
   const fetchBooks = async () => {
      try {
-        const res = await fetch(`http://localhost:3000/api/books?t=${Date.now()}`);
+        const res = await fetch(`https://brauni-backend.onrender.com/api/books?t=${Date.now()}`);
         if (res.ok) {
            const data = await res.json();
            setBooks(data);
@@ -71,7 +71,7 @@ const BookCatalog = () => {
       }
 
       try {
-          const res = await fetch('http://localhost:3000/api/books', {
+          const res = await fetch('https://brauni-backend.onrender.com/api/books', {
               method: 'POST',
               body: submitData // Fetch sets Content-Type header specific to Boundary 
           });
@@ -98,7 +98,7 @@ const BookCatalog = () => {
       if (!window.confirm('¿Estás seguro de que quieres eliminar este libro?')) return;
 
       try {
-          const res = await fetch(`http://localhost:3000/api/books/${bookId}`, {
+          const res = await fetch(`https://brauni-backend.onrender.com/api/books/${bookId}`, {
               method: 'DELETE'
           });
 
@@ -216,7 +216,7 @@ const BookCatalog = () => {
               // Priority: cover_image (server) -> cover_color (gradient)
               const hasImage = !!book.cover_image;
               const bgStyle = hasImage 
-                  ? { backgroundImage: `url(http://localhost:3000${book.cover_image})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+                  ? { backgroundImage: `url(https://brauni-backend.onrender.com${book.cover_image})`, backgroundSize: 'cover', backgroundPosition: 'center' }
                   : { background: `linear-gradient(135deg, ${book.cover_color || '#334155'}, #020617)` };
               
               return (

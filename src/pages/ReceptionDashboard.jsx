@@ -29,8 +29,8 @@ const ReceptionDashboard = () => {
     // Fetch Data on Mount
     const fetchData = () => {
         Promise.all([
-            fetch('http://localhost:3000/api/users').then(r => r.json()),
-            fetch('http://localhost:3000/api/books').then(r => r.json())
+            fetch('https://brauni-backend.onrender.com/api/users').then(r => r.json()),
+            fetch('https://brauni-backend.onrender.com/api/books').then(r => r.json())
         ]).then(([usersData, booksData]) => {
             setUsers(usersData);
             setBooks(booksData);
@@ -95,7 +95,7 @@ const ReceptionDashboard = () => {
     const confirmLoan = async () => {
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:3000/api/loans', {
+            const res = await fetch('https://brauni-backend.onrender.com/api/loans', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ user_id: scannedUser.id, book_id: scannedBook.id, days: selectedDuration })
@@ -288,7 +288,7 @@ const ReceptionDashboard = () => {
                                         <div style={{ display: 'flex', gap: '24px', padding: '24px', background: 'var(--bg-app)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-focus)', marginBottom: '20px' }}>
                                             <div style={{ 
                                                 width: '60px', height: '90px', 
-                                                background: scannedBook.cover_image ? `url(http://localhost:3000${scannedBook.cover_image}) center/cover` : scannedBook.cover_color || '#333',
+                                                background: scannedBook.cover_image ? `url(https://brauni-backend.onrender.com${scannedBook.cover_image}) center/cover` : scannedBook.cover_color || '#333',
                                                 borderRadius: '4px'
                                             }}></div>
                                             

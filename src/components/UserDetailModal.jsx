@@ -16,7 +16,7 @@ const UserDetailModal = ({ isOpen, onClose, user, onUpdate, onDelete }) => {
 
   const fetchHistory = async () => {
      try {
-         const res = await fetch(`http://localhost:3000/api/users/${user.id}/history`);
+         const res = await fetch(`https://brauni-backend.onrender.com/api/users/${user.id}/history`);
          if (res.ok) {
              const data = await res.json();
              setHistory(data);
@@ -28,7 +28,7 @@ const UserDetailModal = ({ isOpen, onClose, user, onUpdate, onDelete }) => {
 
   const handleUpdate = async () => {
       try {
-          const res = await fetch(`http://localhost:3000/api/users/${user.id}`, {
+          const res = await fetch(`https://brauni-backend.onrender.com/api/users/${user.id}`, {
               method: 'PUT',
               headers: {'Content-Type': 'application/json'},
               body: JSON.stringify(formData)

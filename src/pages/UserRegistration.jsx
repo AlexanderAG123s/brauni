@@ -26,7 +26,7 @@ const UserRegistration = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/users');
+      const response = await fetch('https://brauni-backend.onrender.com/api/users');
       if (response.ok) {
         const data = await response.json();
         setUsers(data);
@@ -49,7 +49,7 @@ const UserRegistration = () => {
       e.preventDefault();
       
       try {
-        const response = await fetch('http://localhost:3000/api/users', {
+        const response = await fetch('https://brauni-backend.onrender.com/api/users', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData)
@@ -259,7 +259,7 @@ const UserRegistration = () => {
           }}
           onDelete={async (id) => {
              try {
-                await fetch(`http://localhost:3000/api/users/${id}`, { method: 'DELETE' });
+                await fetch(`https://brauni-backend.onrender.com/api/users/${id}`, { method: 'DELETE' });
                 setUsers(prev => prev.filter(u => u.id !== id));
                 setSelectedUser(null);
              } catch (err) { alert('Error deleting'); }

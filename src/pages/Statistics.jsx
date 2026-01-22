@@ -7,7 +7,7 @@ const Statistics = () => {
 
   useEffect(() => {
      const fetchStats = () => {
-         fetch('http://localhost:3000/api/stats')
+         fetch('https://brauni-backend.onrender.com/api/stats')
             .then(res => res.json())
             .then(data => setStats(data))
             .catch(err => console.error(err));

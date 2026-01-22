@@ -14,7 +14,7 @@
   VITE_API_URL = "https://tu-backend-url.com"
 
 [context.branch-deploy.environment]
-  VITE_API_URL = "http://localhost:3000"
+  VITE_API_URL = "https://brauni-backend.onrender.com"
 
 # Security: Omit backend-related secrets from scanning
 [build.environment]

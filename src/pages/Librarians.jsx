@@ -17,7 +17,7 @@ const Librarians = () => {
     }, []);
 
     const fetchStaff = () => {
-        fetch('http://localhost:3000/api/staff')
+        fetch('https://brauni-backend.onrender.com/api/staff')
             .then(res => res.json())
             .then(data => { setStaff(data); setLoading(false); })
             .catch(err => console.error(err));
@@ -26,7 +26,7 @@ const Librarians = () => {
     const handleDelete = async (id) => {
         if (!confirm('¿Eliminar bibliotecario?')) return;
         try {
-            await fetch(`http://localhost:3000/api/staff/${id}`, { method: 'DELETE' });
+            await fetch(`https://brauni-backend.onrender.com/api/staff/${id}`, { method: 'DELETE' });
             fetchStaff();
         } catch(e) { alert('Error'); }
     };
@@ -35,7 +35,7 @@ const Librarians = () => {
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            const res = await fetch('http://localhost:3000/api/staff', {
+            const res = await fetch('https://brauni-backend.onrender.com/api/staff', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(formData)

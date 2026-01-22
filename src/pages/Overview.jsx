@@ -12,12 +12,12 @@ const Overview = ({ setActiveView, user }) => {
   const [recentLoans, setRecentLoans] = useState([]);
 
   useEffect(() => {
-     fetch('http://localhost:3000/api/stats')
+     fetch('https://brauni-backend.onrender.com/api/stats')
         .then(res => res.json())
         .then(data => setStats(data))
         .catch(err => console.error(err));
 
-     fetch('http://localhost:3000/api/loans')
+     fetch('https://brauni-backend.onrender.com/api/loans')
         .then(res => res.json())
         .then(data => setRecentLoans(data))
         .catch(err => console.error(err));
