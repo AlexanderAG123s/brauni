@@ -9,7 +9,7 @@ const Librarians = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     
     // Form
-    const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'librarian' });
+    const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'Bibliotecario' });
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
@@ -42,7 +42,7 @@ const Librarians = () => {
             });
             if (res.ok) {
                 setIsModalOpen(false);
-                setFormData({ name: '', email: '', password: '', role: 'librarian' });
+                setFormData({ name: '', email: '', password: '', role: 'Bibliotecario' });
                 fetchStaff();
             } else {
                 alert('Error al crear usuario');
@@ -72,13 +72,13 @@ const Librarians = () => {
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '16px' }}>
                              <div style={{ 
                                     width: '48px', height: '48px', borderRadius: '50%', 
-                                    background: (user.role === 'admin' || user.role === 'super_admin') ? 'var(--primary)' : 'var(--bg-card-hover)',
-                                    color: (user.role === 'admin' || user.role === 'super_admin') ? 'var(--bg-app)' : 'var(--text-secondary)',
+                                    background: user.role === 'Admin' ? 'var(--primary)' : 'var(--bg-card-hover)',
+                                    color: user.role === 'Admin' ? 'var(--bg-app)' : 'var(--text-secondary)',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center'
                              }}>
-                                    {(user.role === 'admin' || user.role === 'super_admin') ? <Shield size={24} /> : <User size={24} />}
+                                    {user.role === 'Admin' ? <Shield size={24} /> : <User size={24} />}
                              </div>
-                             {user.role !== 'admin' && user.role !== 'super_admin' && (
+                             {(
                                 <button onClick={() => handleDelete(user.id)} style={{ color: 'var(--status-danger)', opacity: 0.6, cursor: 'pointer', padding: '4px' }} title="Eliminar">
                                     <Trash2 size={16} />
                                 </button>
@@ -90,7 +90,7 @@ const Librarians = () => {
                              <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '12px' }}>{user.email}</p>
                              
                              <div style={{ display: 'flex', gap: '8px' }}>
-                                 <Badge text={user.role} active={user.role === 'admin' || user.role === 'super_admin'} />
+                                 <Badge text={user.role} active={user.role === 'Admin'} />
                                  <Badge text="Activo" active={true} color="var(--status-success)" />
                              </div>
                         </div>
@@ -108,16 +108,16 @@ const Librarians = () => {
                     {/* Role Selection Cards */}
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                          <RoleCard 
-                            role="librarian" 
-                            selected={formData.role === 'librarian'} 
-                            onClick={() => setFormData({...formData, role: 'librarian'})}
+                            role="Bibliotecario" 
+                            selected={formData.role === 'Bibliotecario'} 
+                            onClick={() => setFormData({...formData, role: 'Bibliotecario'})}
                             icon={User}
                             description="Acceso básico a préstamos y devoluciones."
                          />
                          <RoleCard 
-                            role="admin" 
-                            selected={formData.role === 'admin'} 
-                            onClick={() => setFormData({...formData, role: 'admin'})}
+                            role="Admin" 
+                            selected={formData.role === 'Admin'} 
+                            onClick={() => setFormData({...formData, role: 'Admin'})}
                             icon={Shield}
                             description="Control total del sistema y usuarios."
                          />

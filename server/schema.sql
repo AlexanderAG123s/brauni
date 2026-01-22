@@ -49,8 +49,8 @@ CREATE TABLE loans (
 CREATE INDEX idx_users_search ON users(name, matricula);
 CREATE INDEX idx_books_search ON books(title, author);
 
--- Insert default admin staff member
+-- Insert default admin staff members
 INSERT INTO staff (name, email, password, role) VALUES
-  ('Super Admin', 'superadmin@brauni.edu', '$2b$10$W06.zOkP2IJGtQCtRPohGO/EYsFktib1JTFQPyw..y9C6BjLBwkOC', 'super_admin'),
-  ('Brauni', 'admin@brauni.edu', '$2b$10$W06.zOkP2IJGtQCtRPohGO/EYsFktib1JTFQPyw..y9C6BjLBwkOC', 'admin')
+  ('Super Admin', 'superadmin@brauni.edu', '$2b$10$W06.zOkP2IJGtQCtRPohGO/EYsFktib1JTFQPyw..y9C6BjLBwkOC', 'Admin'),
+  ('Admin', 'admin@brauni.edu', '$2b$10$W06.zOkP2IJGtQCtRPohGO/EYsFktib1JTFQPyw..y9C6BjLBwkOC', 'Admin')
 ON CONFLICT (email) DO NOTHING;
